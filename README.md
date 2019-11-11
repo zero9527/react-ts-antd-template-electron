@@ -1,29 +1,39 @@
 # react-ts-antd-template-electron
 
+切换到当前分支 `electron-app`，建议单独拉一份代码，因为两个分支的依赖是不一样的，只要将 `electron` 分支 build 的文件拉过来即可
 ```
-git clone https://github.com/zero9527/react-ts-antd-template-electron.git
-
-cd react-ts-antd-template-electron
-
-yarn install/npm install
-
-yarn start/npm start
+git checkout electron-app
 ```
 
-然后在 vscode 运行，方便调试/重启等， .vscode 的运行配置也一并上传了
-> 或者在另一个终端 运行 `yarn electron-start` 或 `npm electron-start`，启动 `electron` 应用
+## electron 打包
+按照以下操作可以减少大概 `40M` 的安装包大小（mac）
 
-网页版看 [这里](https://github.com/zero9527/react-ts-antd-template)
+* build: `electron分支` 构建好的前端项目
+* main.js: `electron` 入口文件
+* package.json: 将前端项目的相关依赖删掉，只保留 `electron` 用到的依赖
+* node_modules: 先删掉，等 `package.json` 改好后，再次 `yarn install/npm install`
+* dist: `electron` 打包输出的文件、安装包等
 
-## ipcRender 在网页上面的简单使用
-参考 [这里](https://github.com/electron/electron/issues/9920#issuecomment-336757899)
+### electron 打包需要的文件结构
+```
+.
+├── build
+├── node_modules
+├── main.js
+└── package.json
+```
 
-* 在根目录创建 electron-src/preload.js
-* package.json 中：
-  > 开发运行的时候没问题，但是不将文件包含进去打包的话，安装包不包含这个文件就会报错，找不到 preload .js 了
+如当前分支 `electron-app`，结构如上；
 
-  build.files 添加 preload.js 文件，我放在 electron-src 下，所以将这个目录都包含进去
-  ```
+### `package.json` 如下：
+> 注意 preload.js 要写入 build.files 下，不然打包时是不会被包含进去的！！！
+
+```json
+{
+  "name": "react-ts-antd-template-electron",
+  "version": "0.1.1",
+  "homepage": ".",
+  "main": "main.js",
   "build": {
     "appId": "com.example.electron-cra",
     "files": [
@@ -36,40 +46,13 @@ yarn start/npm start
       "buildResources": "package"
     }
   },
-  ```
-* main.js 中修改：
-  ```
-  mainWindow = new BrowserWindow({ 
-    width: 800, 
-    height: 600, 
-    webPreferences: {
-      nodeIntegration: true, // 是否集成 Nodejs
-      webSecurity: false,
-      preload: __dirname + '/electron-src/preload.js'
-    }
-  });
-  ```
-* preload.js 如下：
-  ```
-  window.ipcRenderer = require('electron').ipcRenderer;
-  ```
-* 在 common.d.ts 中添加 
-  ```
-  interface Window { 
-    ipcRenderer: any
+  "scripts": {
+    "electron-build": "electron-builder"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^6.0.7",
+    "electron-builder": "^21.2.0"
   }
-  ```
-* 使用的时候：
-  ```
-  const ipcRenderer = window.ipcRenderer;
-  if (ipcRenderer) {
-    // electron 中打开
-  } else {
-    // 网页中打开
-  }
-  ```
-
-
-## electron 打包
-
-可以看 [electron-app](https://github.com/zero9527/react-ts-antd-template/tree/electron-app) 分支
+}
+```

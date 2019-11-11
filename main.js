@@ -12,22 +12,29 @@ function createWindow () {
     webPreferences: {
       nodeIntegration: true, // 是否集成 Nodejs
       webSecurity: false,
-      preload: path.join(__dirname, '/electron-src/preload.js')
+      preload: path.join(__dirname, 'electron-src/preload.js')
     }
   });
-
-  // 打包的写法在 electron-app 分支
-  mainWindow.loadURL('http://localhost:3000/');
   
-  mainWindow.webContents.openDevTools();
+  mainWindow.loadURL(
+    url.format({
+      pathname: path.join(__dirname, './build/index.html'),
+      protocol: 'file:',
+      slashes: true
+    })
+  );
+  
+  if (!app.isPackaged) {
+    mainWindow.webContents.openDevTools();
+  }
 
   // src/components/electron-ipcRender/index.tsx 中 ipcRenderer.send 触发
   ipcMain.addListener('show-dialog', (event, text) => {
     dialog.showMessageBox({
-      message: `Electron弹窗弹窗：${text}`
+      message: `Electron的弹窗弹窗: ${text}`
     }).then(result => {
       console.log('result: ', result);
-      event.reply('show-dialog-done');
+      event.reply('show-dialog-done', 'done');
     });
   })
 
