@@ -1,22 +1,19 @@
-# react-ts-antd-template
+# react-ts-antd-template-electron
 
 ```
-git clone https://github.com/zero9527/react-ts-antd-template.git
+git clone https://github.com/zero9527/react-ts-antd-template-electron.git
 
-cd react-ts-antd-template
-
-git checkout electron
+cd react-ts-antd-template-electron
 
 yarn install/npm install
 
 yarn start/npm start
 ```
 
-> 如果在其他分支（`master`/`electron-app`）已经 `yarn install/npm install` 过了，就先删除 node_modules，再重新 `yarn install/npm install`
-
 然后在 vscode 运行，方便调试/重启等， .vscode 的运行配置也一并上传了
 > 或者在另一个终端 运行 `yarn electron-start` 或 `npm electron-start`，启动 `electron` 应用
 
+网页版看 [这里](https://github.com/zero9527/react-ts-antd-template)
 
 ## ipcRender 在网页上面的简单使用
 参考 [这里](https://github.com/electron/electron/issues/9920#issuecomment-336757899)
